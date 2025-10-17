@@ -1,0 +1,95 @@
+mapboxgl.accessToken = 'pk.eyJ1Ijoic2F2Y3VyY2lvIiwiYSI6ImNtZ3U2azl4YjBjcnAya3B1cnE4Z3MzMHcifQ.tfQmFhPkDPVzd3wKeJXHyA';
+
+const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v12',
+    center: [133.7751, -25.2744],
+    zoom: 4
+});
+
+// 12 markers with custom coordinates and names
+const markers = [
+    { name: 'Adelaide United', lng: 498.568918, lat: -34.907379 },
+    { name: 'Aukland FC', lng: 174.81246, lat: -36.91834 }, // Melbourne
+    { name: 'Brisbane Roar', lng: 153.00957, lat: -27.46488 }, // Brisbane
+    { name: 'Central Coast Mariners', lng: 151.33813, lat: -33.42826 }, // Adelaide
+    { name: 'Macarthur FC', lng: 150.83371, lat: -34.05038 }, // Perth
+    { name: 'Melbourne City', lng: 144.98361, lat: -37.82586 }, // Hobart
+    { name: 'Melbourne Victory', lng: 144.98389, lat: -37.82434 }, // Canberra
+    { name: 'Newcastle Jets', lng: 151.72655, lat: -32.91884 }, // Darwin
+    { name: 'Perth Glory', lng: 115.86993, lat: -31.94575 }, // Central QLD
+    { name: 'Sydney FC', lng: 151.22507, lat: -33.88914 }, // Central NSW
+    { name: 'Wellington Phoenix', lng: 174.78586, lat: -41.27301 }, // Western WA
+    { name: 'Western Sydney Wanderers', lng: 151.00004, lat: -33.80859 },// Southern VIC
+    { name: 'Western United', lng: 144.62846, lat: -37.82810 } // Southern VIC
+];
+
+// Store marker references
+const markerElements = [];
+
+// Add markers when map loads
+map.on('load', function() {
+    markers.forEach((marker, index) => {
+        // Create marker element (blank initially)
+        const markerElement = document.createElement('div');
+        markerElement.className = 'custom-marker';
+        markerElement.style.width = '20px';
+        markerElement.style.height = '20px';
+        markerElement.style.borderRadius = '50%';
+        markerElement.style.backgroundColor = '#808080';
+        markerElement.style.border = '2px solid white';
+        markerElement.style.cursor = 'pointer';
+        markerElement.dataset.clubName = marker.name.toLowerCase();
+        markerElement.dataset.index = index;
+
+        // Create popup (blank initially)
+        const popup = new mapboxgl.Popup({
+            offset: 25,
+            closeButton: false
+        }).setHTML(`<div class="marker-popup">Guess this club!</div>`);
+
+        // Create marker
+        const mapboxMarker = new mapboxgl.Marker(markerElement)
+            .setLngLat([marker.lng, marker.lat])
+            .setPopup(popup)
+            .addTo(map);
+
+        // Store reference
+        markerElements.push({
+            element: markerElement,
+            popup: popup,
+            mapboxMarker: mapboxMarker,
+            name: marker.name
+        });
+    });
+});
+
+function checkGuess() {
+    const guess = document.getElementById('searchInput').value.trim().toLowerCase();
+    if (!guess) return;
+
+    let found = false;
+    markerElements.forEach(markerRef => {
+        if (markerRef.element.dataset.clubName === guess) {
+            // Correct guess - turn marker blue and show name
+            markerRef.element.style.backgroundColor = '#4285f4';
+            markerRef.popup.setHTML(`<div class="marker-popup"><strong>${markerRef.name}</strong><br>Correct!</div>`);
+            found = true;
+        }
+    });
+
+    if (found) {
+        document.getElementById('searchInput').value = '';
+        console.log('Correct guess!');
+    } else {
+        console.log('Incorrect guess. Try again!');
+    }
+}
+
+document.getElementById('searchBtn').addEventListener('click', checkGuess);
+
+document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        checkGuess();
+    }
+});
