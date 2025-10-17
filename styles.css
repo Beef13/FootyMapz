@@ -140,8 +140,8 @@ body {
     font-size: 14px;
 }
 
-/* Responsive: On small screens, hide list and stack progress under search bar with full width */
-@media (max-width: 680px) {
+/* Responsive: As soon as elements touch/overlap, hide list and stack progress under search bar with full width */
+@media (max-width: 1000px) {
     .search-container {
         left: 20px;
         transform: none;
