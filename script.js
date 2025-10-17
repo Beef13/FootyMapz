@@ -13,26 +13,27 @@ const map = new mapboxgl.Map({
 map.dragRotate.disable();
 map.touchZoomRotate.disableRotation();
 
-// 13 markers with custom coordinates and names
+// 13 markers with custom coordinates, names, and colors
 const markers = [
-    { name: 'Adelaide United', lng: 138.6007, lat: -34.9285 },
-    { name: 'Auckland FC', lng: 174.7633, lat: -36.8485 },
-    { name: 'Brisbane Roar', lng: 153.0235, lat: -27.4698 },
-    { name: 'Central Coast Mariners', lng: 151.3440, lat: -33.4240 },
-    { name: 'Macarthur FC', lng: 150.8260, lat: -34.0660 },
-    { name: 'Melbourne City', lng: 144.9836, lat: -37.8243 },
-    { name: 'Melbourne Victory', lng: 144.9839, lat: -37.8243 },
-    { name: 'Newcastle Jets', lng: 151.7810, lat: -32.9290 },
-    { name: 'Perth Glory', lng: 115.8570, lat: -31.9520 },
-    { name: 'Sydney FC', lng: 151.2190, lat: -33.8900 },
-    { name: 'Wellington Phoenix', lng: 174.7762, lat: -41.2865 },
-    { name: 'Western Sydney Wanderers', lng: 151.0060, lat: -33.8140 },
-    { name: 'Western United', lng: 144.6285, lat: -37.8281 }
+    { name: 'Adelaide United', lng: 138.6007, lat: -34.9285, color: '#FF6B6B' },
+    { name: 'Auckland FC', lng: 174.7633, lat: -36.8485, color: '#4ECDC4' },
+    { name: 'Brisbane Roar', lng: 153.0235, lat: -27.4698, color: '#45B7D1' },
+    { name: 'Central Coast Mariners', lng: 151.3440, lat: -33.4240, color: '#96CEB4' },
+    { name: 'Macarthur FC', lng: 150.8260, lat: -34.0660, color: '#FFEAA7' },
+    { name: 'Melbourne City', lng: 144.9836, lat: -37.8243, color: '#DDA0DD' },
+    { name: 'Melbourne Victory', lng: 144.9839, lat: -37.8243, color: '#98D8C8' },
+    { name: 'Newcastle Jets', lng: 151.7810, lat: -32.9290, color: '#F7DC6F' },
+    { name: 'Perth Glory', lng: 115.8570, lat: -31.9520, color: '#BB8FCE' },
+    { name: 'Sydney FC', lng: 151.2190, lat: -33.8900, color: '#85C1E9' },
+    { name: 'Wellington Phoenix', lng: 174.7762, lat: -41.2865, color: '#F8C471' },
+    { name: 'Western Sydney Wanderers', lng: 151.0060, lat: -33.8140, color: '#82E0AA' },
+    { name: 'Western United', lng: 144.6285, lat: -37.8281, color: '#F1948A' }
 ];
 
 // Store marker references
 const markerElements = [];
 const guessedSet = new Set();
+const guessedColors = [];
 
 // Add markers when map loads
 map.on('load', function() {
@@ -84,11 +85,13 @@ function checkGuess() {
     let found = false;
     markerElements.forEach(markerRef => {
         if (markerRef.element.dataset.clubName === guess) {
-            // Correct guess - turn marker blue and show name
-            markerRef.element.style.backgroundColor = '#4285f4';
+            // Correct guess - turn marker to club color and show name
+            const clubColor = markers.find(m => m.name === markerRef.name)?.color || '#4285f4';
+            markerRef.element.style.backgroundColor = clubColor;
             markerRef.popup.setHTML(`<div class="marker-popup"><strong>${markerRef.name}</strong><br>Correct!</div>`);
             found = true;
             guessedSet.add(markerRef.name);
+            guessedColors.push(clubColor);
         }
     });
 
@@ -123,10 +126,22 @@ function updateGuessedUI() {
         list.appendChild(li);
     });
 
-    // Update progress
+    // Update progress bar with colored segments
     const total = markers.length;
     const guessed = guessedSet.size;
     const pct = Math.round((guessed / total) * 100);
+    
+    // Create gradient for progress bar based on guessed colors
+    if (guessedColors.length > 0) {
+        const gradientStops = guessedColors.map((color, index) => {
+            const stop = Math.round((index / guessedColors.length) * 100);
+            return `${color} ${stop}%`;
+        }).join(', ');
+        progressBar.style.background = `linear-gradient(90deg, ${gradientStops})`;
+    } else {
+        progressBar.style.background = 'linear-gradient(90deg, #667eea, #5a6fd8)';
+    }
+    
     progressBar.style.width = pct + '%';
     progressLabel.textContent = `${guessed} / ${total} guessed`;
 }
