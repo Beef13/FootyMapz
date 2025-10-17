@@ -7,21 +7,21 @@ const map = new mapboxgl.Map({
     zoom: 4
 });
 
-// 12 markers with custom coordinates and names
+// 13 markers with custom coordinates and names
 const markers = [
-    { name: 'Adelaide United', lng: 498.568918, lat: -34.907379 },
-    { name: 'Aukland FC', lng: 174.81246, lat: -36.91834 }, // Melbourne
-    { name: 'Brisbane Roar', lng: 153.00957, lat: -27.46488 }, // Brisbane
-    { name: 'Central Coast Mariners', lng: 151.33813, lat: -33.42826 }, // Adelaide
-    { name: 'Macarthur FC', lng: 150.83371, lat: -34.05038 }, // Perth
-    { name: 'Melbourne City', lng: 144.98361, lat: -37.82586 }, // Hobart
-    { name: 'Melbourne Victory', lng: 144.98389, lat: -37.82434 }, // Canberra
-    { name: 'Newcastle Jets', lng: 151.72655, lat: -32.91884 }, // Darwin
-    { name: 'Perth Glory', lng: 115.86993, lat: -31.94575 }, // Central QLD
-    { name: 'Sydney FC', lng: 151.22507, lat: -33.88914 }, // Central NSW
-    { name: 'Wellington Phoenix', lng: 174.78586, lat: -41.27301 }, // Western WA
-    { name: 'Western Sydney Wanderers', lng: 151.00004, lat: -33.80859 },// Southern VIC
-    { name: 'Western United', lng: 144.62846, lat: -37.82810 } // Southern VIC
+    { name: 'Adelaide United', lng: 138.6007, lat: -34.9285 },
+    { name: 'Auckland FC', lng: 174.7633, lat: -36.8485 },
+    { name: 'Brisbane Roar', lng: 153.0235, lat: -27.4698 },
+    { name: 'Central Coast Mariners', lng: 151.3440, lat: -33.4240 },
+    { name: 'Macarthur FC', lng: 150.8260, lat: -34.0660 },
+    { name: 'Melbourne City', lng: 144.9836, lat: -37.8243 },
+    { name: 'Melbourne Victory', lng: 144.9839, lat: -37.8243 },
+    { name: 'Newcastle Jets', lng: 151.7810, lat: -32.9290 },
+    { name: 'Perth Glory', lng: 115.8570, lat: -31.9520 },
+    { name: 'Sydney FC', lng: 151.2190, lat: -33.8900 },
+    { name: 'Wellington Phoenix', lng: 174.7762, lat: -41.2865 },
+    { name: 'Western Sydney Wanderers', lng: 151.0060, lat: -33.8140 },
+    { name: 'Western United', lng: 144.6285, lat: -37.8281 }
 ];
 
 // Store marker references
@@ -63,6 +63,12 @@ map.on('load', function() {
             name: marker.name
         });
     });
+
+    // Initialize progress label
+    const progressLabel = document.getElementById('progressLabel');
+    if (progressLabel) {
+        progressLabel.textContent = `0 / ${markers.length} guessed`;
+    }
 });
 
 function checkGuess() {
@@ -118,11 +124,3 @@ function updateGuessedUI() {
     progressBar.style.width = pct + '%';
     progressLabel.textContent = `${guessed} / ${total} guessed`;
 }
-
-// Initialize progress label on load
-document.addEventListener('DOMContentLoaded', () => {
-    const progressLabel = document.getElementById('progressLabel');
-    if (progressLabel) {
-        progressLabel.textContent = `0 / ${markers.length} guessed`;
-    }
-});
