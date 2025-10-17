@@ -107,7 +107,7 @@ body {
     justify-content: space-between;
     margin-bottom: 10px;
     font-weight: 600;
-    color: #333;
+    color: white;
 }
 
 .progress {
@@ -139,7 +139,7 @@ body {
     border: 1px solid #e6e9ff;
     border-radius: 8px;
     padding: 8px 10px;
-    color: #334;
+    color: white;
     font-size: 14px;
 }
 

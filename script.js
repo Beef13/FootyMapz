@@ -4,8 +4,14 @@ const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/savcurcio/cmguingyr002a01t10if6hpq8',
     center: [133.7751, -25.2744],
-    zoom: 4
+    zoom: 4,
+    pitch: 0,
+    bearing: 0
 });
+
+// Disable 3D tilt/pitch controls
+map.dragRotate.disable();
+map.touchZoomRotate.disableRotation();
 
 // 13 markers with custom coordinates and names
 const markers = [
