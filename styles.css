@@ -36,6 +36,8 @@ body {
     width: 300px;
     box-shadow: var(--input-shadow);
     outline: none;
+    color: white;
+    caret-color: white;
 }
 
 .search-input::placeholder {
