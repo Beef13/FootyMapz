@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FootyMapz - Australian Football Clubs</title>
+    <title>FootyMapz</title>
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
     <style>
         * {
@@ -13,7 +13,7 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             height: 100vh;
             overflow: hidden;
         }
@@ -23,20 +23,12 @@
             height: 100vh;
         }
 
-        .search-panel {
+        .search-container {
             position: absolute;
             top: 20px;
-            left: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 1000;
-            min-width: 300px;
-        }
-
-        .search-container {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -48,20 +40,13 @@
             border-radius: 25px;
             padding: 12px 20px;
             font-size: 16px;
-            width: 100%;
+            width: 300px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .search-input:focus {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            transform: scale(1.02);
         }
 
         .search-input::placeholder {
             color: #999;
-            font-style: italic;
         }
 
         .search-button {
@@ -75,12 +60,6 @@
             justify-content: center;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .search-button:hover {
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-            transform: scale(1.05);
         }
 
         .search-dots {
@@ -108,293 +87,38 @@
         .search-dots::after {
             top: 8px;
         }
-
-        .title-overlay {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-
-        .title-overlay h1 {
-            color: #333;
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-
-        .title-overlay p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .toast {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 16px 24px;
-            border-radius: 8px;
-            z-index: 2000;
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .search-panel {
-                width: calc(100% - 40px);
-                left: 20px;
-                right: 20px;
-            }
-            
-            .search-input {
-                font-size: 14px;
-                padding: 10px 16px;
-            }
-        }
     </style>
 </head>
 <body>
     <div id="map"></div>
     
-    <!-- Search Panel -->
-    <div class="search-panel">
-        <div class="search-container">
-            <input type="text" class="search-input" placeholder="Search football club..." id="clubSearch">
-            <button class="search-button" id="searchBtn">
-                <div class="search-dots"></div>
-            </button>
-        </div>
+    <div class="search-container">
+        <input type="text" class="search-input" placeholder="Search..." id="searchInput">
+        <button class="search-button" id="searchBtn">
+            <div class="search-dots"></div>
+        </button>
     </div>
-    
-    <!-- Title Overlay -->
-    <div class="title-overlay">
-        <h1>⚽ FootyMapz</h1>
-        <p>Australian Football Clubs</p>
-    </div>
-    
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
 
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <script>
-        // Mapbox access token
         mapboxgl.accessToken = 'pk.eyJ1Ijoic2F2Y3VyY2lvIiwiYSI6ImNtZ3U2azl4YjBjcnAya3B1cnE4Z3MzMHcifQ.tfQmFhPkDPVzd3wKeJXHyA';
 
-        // Global variables
-        let map, clubs = [];
-
-        /**
-         * Convert clubs array to GeoJSON FeatureCollection
-         */
-        function toFeatureCollection(clubs) {
-            return {
-                type: 'FeatureCollection',
-                features: clubs.map(club => ({
-                    type: 'Feature',
-                    geometry: {
-                        type: 'Point',
-                        coordinates: [club.lng, club.lat]
-                    },
-                    properties: club
-                }))
-            };
-        }
-
-        /**
-         * Show toast message
-         */
-        function showToast(message, duration = 3000) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.style.display = 'block';
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, duration);
-        }
-
-        // Check if map container exists
-        const mapContainer = document.getElementById('map');
-        if (!mapContainer) {
-            console.error('Map container not found!');
-            return;
-        }
-
-        // Initialize map with default style first
-        map = new mapboxgl.Map({
+        const map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v12',
-            center: [133.7751, -25.2744], // Australia center
+            center: [133.7751, -25.2744],
             zoom: 4
         });
 
-        console.log('Map initialized with container:', mapContainer);
-
-        // Try to load custom style after map loads
-        map.on('load', function() {
-            console.log('Map loaded, attempting to load custom style...');
-            map.setStyle('mapbox://styles/savcurcio/cmgufe8q8002c01sr9c4r3grt').catch(function(e) {
-                console.warn('Custom style failed, keeping default style:', e);
-            });
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            console.log('Search clicked:', document.getElementById('searchInput').value);
         });
 
-        // Fallback to default style if custom style fails
-        map.on('style.error', function(e) {
-            console.error('Custom style error:', e);
-            console.log('Switching back to default style');
-            map.setStyle('mapbox://styles/mapbox/streets-v12');
-        });
-
-        map.on('error', function(e) {
-            console.error('Map error:', e);
-            document.getElementById('map').innerHTML = '<div style="padding: 20px; text-align: center; color: red;">Map failed to load. Check console for errors.</div>';
-        });
-
-        // Add timeout to check if map loads
-        setTimeout(function() {
-            if (!map.isStyleLoaded()) {
-                console.warn('Map style not loaded after 10 seconds');
-                showToast('Map is taking longer than expected to load', 3000);
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                console.log('Search entered:', this.value);
             }
-        }, 10000);
-
-        // Load clubs data and setup map
-        map.on('load', async function() {
-            console.log('Map loaded successfully!');
-            await loadClubs();
         });
-
-        async function loadClubs() {
-            try {
-                const response = await fetch('./data/clubs_au.json');
-                clubs = await response.json();
-                
-                const featureCollection = toFeatureCollection(clubs);
-                
-                // Add clustered source
-                map.addSource('clubs', {
-                    type: 'geojson',
-                    data: featureCollection,
-                    cluster: true,
-                    clusterRadius: 40,
-                    clusterMaxZoom: 12
-                });
-
-                // Add cluster circles
-                map.addLayer({
-                    id: 'clusters',
-                    type: 'circle',
-                    source: 'clubs',
-                    filter: ['has', 'point_count'],
-                    paint: {
-                        'circle-color': '#667eea',
-                        'circle-radius': 20
-                    }
-                });
-
-                // Add cluster count labels
-                map.addLayer({
-                    id: 'cluster-count',
-                    type: 'symbol',
-                    source: 'clubs',
-                    filter: ['has', 'point_count'],
-                    layout: {
-                        'text-field': '{point_count_abbreviated}',
-                        'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-                        'text-size': 12
-                    },
-                    paint: {
-                        'text-color': '#ffffff'
-                    }
-                });
-
-                // Add unclustered points
-                map.addLayer({
-                    id: 'unclustered-point',
-                    type: 'circle',
-                    source: 'clubs',
-                    filter: ['!', ['has', 'point_count']],
-                    paint: {
-                        'circle-color': '#ff6b6b',
-                        'circle-radius': 8,
-                        'circle-stroke-width': 1,
-                        'circle-stroke-color': '#fff'
-                    }
-                });
-
-                // Handle clicks on unclustered points
-                map.on('click', 'unclustered-point', function(e) {
-                    const coordinates = e.features[0].geometry.coordinates.slice();
-                    const properties = e.features[0].properties;
-                    
-                    // Create popup
-                    new mapboxgl.Popup()
-                        .setLngLat(coordinates)
-                        .setHTML(`
-                            <strong>${properties.name}</strong><br>
-                            League: ${properties.league || '—'}<br>
-                            Level: ${properties.leagueLevel ?? '—'}<br>
-                            Stadium: ${properties.stadium || '—'}<br>
-                            State: ${properties.state || '—'}
-                        `)
-                        .addTo(map);
-                });
-
-                // Change cursor on hover
-                map.on('mouseenter', 'unclustered-point', function() {
-                    map.getCanvas().style.cursor = 'pointer';
-                });
-
-                map.on('mouseleave', 'unclustered-point', function() {
-                    map.getCanvas().style.cursor = '';
-                });
-
-                console.log(`Loaded ${clubs.length} clubs`);
-                
-            } catch (error) {
-                console.error('Error loading clubs:', error);
-                showToast('Error loading clubs data', 5000);
-            }
-        }
-
-        // Search functionality
-        document.getElementById('searchBtn').addEventListener('click', handleSearch);
-        document.getElementById('clubSearch').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') handleSearch();
-        });
-
-        function handleSearch() {
-            const searchTerm = document.getElementById('clubSearch').value.trim().toLowerCase();
-            if (!searchTerm) return;
-            
-            const club = clubs.find(c => c.name.toLowerCase().includes(searchTerm));
-            if (!club) {
-                showToast('Club not found', 2000);
-                return;
-            }
-            
-            // Fly to club
-            map.flyTo({
-                center: [club.lng, club.lat],
-                zoom: 12
-            });
-            
-            // Open popup
-            new mapboxgl.Popup()
-                .setLngLat([club.lng, club.lat])
-                .setHTML(`
-                    <strong>${club.name}</strong><br>
-                    League: ${club.league || '—'}<br>
-                    Level: ${club.leagueLevel ?? '—'}<br>
-                    Stadium: ${club.stadium || '—'}<br>
-                    State: ${club.state || '—'}
-                `)
-                .addTo(map);
-        }
     </script>
 </body>
 </html>
