@@ -1,0 +1,24 @@
+/* CSS Variables for FootyMapz */
+:root {
+    /* Transparent and blurred background variables */
+    --bg-transparent: rgba(255, 255, 255, 0.1);
+    --bg-blur: blur(10px);
+    --bg-blur-strong: blur(15px);
+    
+    /* Glass effect combination */
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    
+    /* Input bar specific */
+    --input-bg: var(--glass-bg);
+    --input-blur: var(--bg-blur);
+    --input-border: var(--glass-border);
+    --input-shadow: var(--glass-shadow);
+    
+    /* Leaderboard panel specific */
+    --panel-bg: var(--glass-bg);
+    --panel-blur: var(--bg-blur-strong);
+    --panel-border: var(--glass-border);
+    --panel-shadow: var(--glass-shadow);
+}
