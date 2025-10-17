@@ -217,17 +217,35 @@
             }, duration);
         }
 
-        // Initialize map
+        // Check if map container exists
+        const mapContainer = document.getElementById('map');
+        if (!mapContainer) {
+            console.error('Map container not found!');
+            return;
+        }
+
+        // Initialize map with default style first
         map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/savcurcio/cmgufe8q8002c01sr9c4r3grt',
+            style: 'mapbox://styles/mapbox/streets-v12',
             center: [133.7751, -25.2744], // Australia center
             zoom: 4
+        });
+
+        console.log('Map initialized with container:', mapContainer);
+
+        // Try to load custom style after map loads
+        map.on('load', function() {
+            console.log('Map loaded, attempting to load custom style...');
+            map.setStyle('mapbox://styles/savcurcio/cmgufe8q8002c01sr9c4r3grt').catch(function(e) {
+                console.warn('Custom style failed, keeping default style:', e);
+            });
         });
 
         // Fallback to default style if custom style fails
         map.on('style.error', function(e) {
             console.error('Custom style error:', e);
+            console.log('Switching back to default style');
             map.setStyle('mapbox://styles/mapbox/streets-v12');
         });
 
@@ -236,8 +254,21 @@
             document.getElementById('map').innerHTML = '<div style="padding: 20px; text-align: center; color: red;">Map failed to load. Check console for errors.</div>';
         });
 
+        // Add timeout to check if map loads
+        setTimeout(function() {
+            if (!map.isStyleLoaded()) {
+                console.warn('Map style not loaded after 10 seconds');
+                showToast('Map is taking longer than expected to load', 3000);
+            }
+        }, 10000);
+
         // Load clubs data and setup map
         map.on('load', async function() {
+            console.log('Map loaded successfully!');
+            await loadClubs();
+        });
+
+        async function loadClubs() {
             try {
                 const response = await fetch('./data/clubs_au.json');
                 clubs = await response.json();
@@ -328,7 +359,7 @@
                 console.error('Error loading clubs:', error);
                 showToast('Error loading clubs data', 5000);
             }
-        });
+        }
 
         // Search functionality
         document.getElementById('searchBtn').addEventListener('click', handleSearch);
