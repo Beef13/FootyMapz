@@ -95,6 +95,14 @@ function addMarkerForClub(markerMeta) {
         mapboxMarker: mapboxMarker,
         name: markerMeta.name
     });
+
+    // Smoothly fly to the new marker
+    map.flyTo({
+        center: [markerMeta.lng, markerMeta.lat],
+        zoom: Math.max(map.getZoom(), 4),
+        duration: 1500,
+        essential: true
+    });
 }
 
 // On map load: only initialize UI and rehydrate guessed markers
@@ -120,6 +128,48 @@ map.on('load', function() {
         });
         updateGuessedUI();
     }
+
+    // Show landing overlay initially; hide game UI until Club Guesser is selected
+    const landing = document.getElementById('landingOverlay');
+    const gameUI = document.getElementById('gameUI');
+    const guessedPanel = document.getElementById('guessedPanel');
+    const clubBtn = document.getElementById('clubGuesserBtn');
+    const homeBtn = document.getElementById('homeBtn');
+    const usernameInput = document.getElementById('usernameInput');
+    if (clubBtn && landing && gameUI && guessedPanel) {
+        clubBtn.addEventListener('click', () => {
+            // Persist username if provided
+            const username = (usernameInput && usernameInput.value || '').trim();
+            if (username) {
+                try { localStorage.setItem('footymapz_username', username); } catch (e) {}
+            }
+            landing.classList.add('hidden');
+            gameUI.classList.remove('hidden');
+            guessedPanel.classList.remove('hidden');
+            if (homeBtn) homeBtn.classList.remove('hidden');
+        });
+    }
+
+    // Home button: return to landing
+    if (homeBtn && landing && gameUI && guessedPanel) {
+        homeBtn.addEventListener('click', () => {
+            landing.classList.remove('hidden');
+            gameUI.classList.add('hidden');
+            guessedPanel.classList.add('hidden');
+            homeBtn.classList.add('hidden');
+            // Prefill username from storage when returning home
+            try {
+                const savedName = localStorage.getItem('footymapz_username') || '';
+                if (usernameInput) usernameInput.value = savedName;
+            } catch (e) {}
+        });
+    }
+
+    // Prefill username on load
+    try {
+        const savedName = localStorage.getItem('footymapz_username') || '';
+        if (usernameInput) usernameInput.value = savedName;
+    } catch (e) {}
 
     // Removed AU/NZ overlay layers (dim, lighten, border)
 });
@@ -221,7 +271,7 @@ function updateGuessedUI() {
 
     // Update list
     list.innerHTML = '';
-    Array.from(guessedSet).sort().forEach(name => {
+    guessedOrder.forEach(name => {
         const li = document.createElement('li');
         li.textContent = name;
         list.appendChild(li);

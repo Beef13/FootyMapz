@@ -11,15 +11,35 @@
 <body>
     <div id="map"></div>
     
-    <div class="search-container">
-        <input type="text" class="search-input" placeholder="Search..." id="searchInput">
-        <button class="search-button" id="searchBtn">
-            <div class="search-dots"></div>
+    <!-- Home Button -->
+    <button id="homeBtn" class="home-button hidden" aria-label="Home">
+        <span class="home-icon">🏠</span>
+    </button>
+    
+    <!-- Landing Overlay -->
+    <div id="landingOverlay" class="landing-overlay">
+        <div class="landing-card">
+            <h1 class="landing-title">FootyMapz</h1>
+            <div class="landing-username">
+                <input id="usernameInput" class="landing-input" type="text" placeholder="Enter a username" maxlength="20" />
+            </div>
+            <p class="landing-subtitle">Choose a game mode</p>
+            <div class="landing-actions">
+                <button id="clubGuesserBtn" class="landing-btn primary">Club Guesser</button>
+                <button id="groundFinderBtn" class="landing-btn disabled" disabled>Ground Finder (coming soon)</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="search-container hidden" id="gameUI">
+        <input type="text" class="search-input" placeholder="Guess club here..." id="searchInput">
+        <button class="search-button" id="restartBtn" aria-label="Restart">
+            <span class="restart-icon">↻</span>
         </button>
     </div>
 
     <!-- Guessed Clubs Panel -->
-    <div class="guessed-panel" id="guessedPanel">
+    <div class="guessed-panel hidden" id="guessedPanel">
         <div class="guessed-header">
             <span id="progressLabel">0 / 0 guessed</span>
         </div>
