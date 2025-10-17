@@ -26,6 +26,7 @@ const markers = [
 
 // Store marker references
 const markerElements = [];
+const guessedSet = new Set();
 
 // Add markers when map loads
 map.on('load', function() {
@@ -75,12 +76,14 @@ function checkGuess() {
             markerRef.element.style.backgroundColor = '#4285f4';
             markerRef.popup.setHTML(`<div class="marker-popup"><strong>${markerRef.name}</strong><br>Correct!</div>`);
             found = true;
+            guessedSet.add(markerRef.name);
         }
     });
 
     if (found) {
         document.getElementById('searchInput').value = '';
         console.log('Correct guess!');
+        updateGuessedUI();
     } else {
         console.log('Incorrect guess. Try again!');
     }
@@ -91,5 +94,35 @@ document.getElementById('searchBtn').addEventListener('click', checkGuess);
 document.getElementById('searchInput').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
         checkGuess();
+    }
+});
+
+// Guessed UI updates
+function updateGuessedUI() {
+    const list = document.getElementById('guessedList');
+    const progressBar = document.getElementById('progressBar');
+    const progressLabel = document.getElementById('progressLabel');
+
+    // Update list
+    list.innerHTML = '';
+    Array.from(guessedSet).sort().forEach(name => {
+        const li = document.createElement('li');
+        li.textContent = name;
+        list.appendChild(li);
+    });
+
+    // Update progress
+    const total = markers.length;
+    const guessed = guessedSet.size;
+    const pct = Math.round((guessed / total) * 100);
+    progressBar.style.width = pct + '%';
+    progressLabel.textContent = `${guessed} / ${total} guessed`;
+}
+
+// Initialize progress label on load
+document.addEventListener('DOMContentLoaded', () => {
+    const progressLabel = document.getElementById('progressLabel');
+    if (progressLabel) {
+        progressLabel.textContent = `0 / ${markers.length} guessed`;
     }
 });
