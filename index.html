@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Footy Maps</title>
+    <title>FootyMapz - Australian Football Clubs</title>
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
     <style>
         * {
@@ -23,34 +23,20 @@
             height: 100vh;
         }
 
-        .map-overlay {
+        .search-panel {
             position: absolute;
             top: 20px;
             left: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             z-index: 1000;
-        }
-
-        .map-overlay h1 {
-            color: #333;
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-
-        .map-overlay p {
-            color: #666;
-            font-size: 14px;
+            min-width: 300px;
         }
 
         .search-container {
-            position: absolute;
-            top: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -62,7 +48,7 @@
             border-radius: 25px;
             padding: 12px 20px;
             font-size: 16px;
-            width: 300px;
+            width: 100%;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             outline: none;
             transition: all 0.3s ease;
@@ -97,10 +83,6 @@
             transform: scale(1.05);
         }
 
-        .search-button:active {
-            transform: scale(0.95);
-        }
-
         .search-dots {
             width: 4px;
             height: 4px;
@@ -127,155 +109,28 @@
             top: 8px;
         }
 
-        @media (max-width: 768px) {
-            .search-container {
-                width: 90%;
-                max-width: 350px;
-            }
-            
-            .search-input {
-                width: 100%;
-                font-size: 14px;
-                padding: 10px 16px;
-            }
-        }
-
-        /* Mode Toggle UI */
-        .mode-panel {
+        .title-overlay {
             position: absolute;
             top: 20px;
-            left: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            min-width: 280px;
-        }
-
-        .mode-toggle {
-            display: flex;
-            background: #f0f0f0;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
             border-radius: 8px;
-            padding: 4px;
-            margin-bottom: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
         }
 
-        .mode-btn {
-            flex: 1;
-            padding: 8px 16px;
-            border: none;
-            background: transparent;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .mode-btn.active {
-            background: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .quiz-filters {
-            display: none;
-        }
-
-        .quiz-filters.active {
-            display: block;
-        }
-
-        .filter-group {
-            margin-bottom: 12px;
-        }
-
-        .filter-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 6px;
-            font-size: 14px;
-        }
-
-        .filter-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .filter-chip {
-            padding: 4px 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 16px;
-            background: white;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .filter-chip.selected {
-            border-color: #667eea;
-            background: #667eea;
-            color: white;
-        }
-
-        .filter-input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .quiz-controls {
-            margin-top: 16px;
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #5a6fd8;
-        }
-
-        .btn-secondary {
-            background: #f0f0f0;
+        .title-overlay h1 {
             color: #333;
+            font-size: 24px;
+            margin-bottom: 5px;
         }
 
-        .btn-secondary:hover {
-            background: #e0e0e0;
+        .title-overlay p {
+            color: #666;
+            font-size: 14px;
         }
 
-        /* Quiz Banner */
-        .quiz-banner {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(102, 126, 234, 0.95);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            z-index: 1000;
-            display: none;
-        }
-
-        /* Toast */
         .toast {
             position: fixed;
             top: 50%;
@@ -288,646 +143,227 @@
             z-index: 2000;
             display: none;
         }
-        /* Controls panel */
-        .controls {
-            position: absolute;
-            top: 80px;
-            left: 20px;
-            z-index: 1100;
-            background: rgba(255,255,255,0.95);
-            border-radius: 10px;
-            padding: 12px;
-            width: 320px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.12);
-            backdrop-filter: blur(4px);
-        }
-        .segmented {
-            display: flex;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-        .segmented button {
-            flex: 1;
-            padding: 8px 10px;
-            background: #fff;
-            border: 0;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .segmented button.active {
-            background: #111;
-            color: #fff;
-        }
-        .filters {
-            display: none;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            border: 1px solid #ccc;
-            border-radius: 999px;
-            padding: 6px 10px;
-            font-size: 12px;
-            cursor: pointer;
-            background: #fff;
-        }
-        .chip input { accent-color: #111; }
-        .row {
-            display: flex;
-            gap: 8px;
-            margin: 6px 0;
-            align-items: center;
-        }
-        .row label { font-size: 12px; color: #333; min-width: 70px; }
-        .row input, .row select {
-            flex: 1;
-            padding: 6px 8px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 13px;
-        }
-        .btn {
-            display: inline-block;
-            border: 0;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-weight: 700;
-            cursor: pointer;
-            background: #111;
-            color: #fff;
-        }
-        .toast {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.85);
-            color: #fff;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 14px;
-            z-index: 1200;
-        }
+
         @media (max-width: 768px) {
-            .controls { width: calc(100% - 40px); left: 50%; transform: translateX(-50%); top: 80px; }
+            .search-panel {
+                width: calc(100% - 40px);
+                left: 20px;
+                right: 20px;
+            }
+            
+            .search-input {
+                font-size: 14px;
+                padding: 10px 16px;
+            }
         }
     </style>
 </head>
 <body>
     <div id="map"></div>
     
-    <!-- Mode Toggle Panel -->
-    <div class="mode-panel">
-        <div class="mode-toggle">
-            <button class="mode-btn active" data-mode="browse">Browse</button>
-            <button class="mode-btn" data-mode="quiz">Quiz</button>
-        </div>
-        
-        <!-- Browse Mode -->
-        <div id="browseMode">
-            <div class="search-container" style="position: static; transform: none; width: 100%;">
-                <input type="text" class="search-input" placeholder="Search football club..." id="clubSearch" style="width: 100%;">
-                <button class="search-button" id="searchBtn">
-                    <div class="search-dots"></div>
-                </button>
-            </div>
-        </div>
-        
-        <!-- Quiz Mode -->
-        <div class="quiz-filters" id="quizMode">
-            <div class="filter-group">
-                <label>Competition</label>
-                <div class="filter-chips">
-                    <div class="filter-chip selected" data-competition="ALM">ALM</div>
-                    <div class="filter-chip selected" data-competition="ALW">ALW</div>
-                    <div class="filter-chip selected" data-competition="NPL">NPL</div>
-                </div>
-            </div>
-            
-            <div class="filter-group">
-                <label>League Level</label>
-                <input type="number" class="filter-input" id="leagueLevel" placeholder="Any level">
-            </div>
-            
-            <div class="filter-group">
-                <label>State/Territory</label>
-                <div class="filter-chips">
-                    <div class="filter-chip selected" data-state="NSW">NSW</div>
-                    <div class="filter-chip selected" data-state="VIC">VIC</div>
-                    <div class="filter-chip selected" data-state="QLD">QLD</div>
-                    <div class="filter-chip selected" data-state="SA">SA</div>
-                    <div class="filter-chip selected" data-state="WA">WA</div>
-                    <div class="filter-chip selected" data-state="TAS">TAS</div>
-                    <div class="filter-chip selected" data-state="ACT">ACT</div>
-                    <div class="filter-chip selected" data-state="NT">NT</div>
-                </div>
-            </div>
-            
-            <div class="filter-group">
-                <label>Rounds</label>
-                <input type="number" class="filter-input" id="rounds" value="5" min="1" max="20">
-            </div>
-            
-            <div class="quiz-controls">
-                <button class="btn btn-primary" id="startQuiz">Start Quiz</button>
-                <button class="btn btn-secondary" id="resetQuiz" style="display: none;">Reset</button>
-            </div>
+    <!-- Search Panel -->
+    <div class="search-panel">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search football club..." id="clubSearch">
+            <button class="search-button" id="searchBtn">
+                <div class="search-dots"></div>
+            </button>
         </div>
     </div>
     
-    <!-- Quiz Banner -->
-    <div class="quiz-banner" id="quizBanner">
-        Find: <span id="targetClubName"></span>
+    <!-- Title Overlay -->
+    <div class="title-overlay">
+        <h1>⚽ FootyMapz</h1>
+        <p>Australian Football Clubs</p>
     </div>
     
     <!-- Toast -->
     <div class="toast" id="toast"></div>
-    
-    <!-- Title Overlay -->
-    <div class="map-overlay">
-        <h1>⚽ FootyMapz</h1>
-        <p>Interactive Football Map</p>
-    </div>
-
-    <!-- Controls Panel -->
-    <div class="controls" id="controls">
-        <div class="segmented" id="modeToggle">
-            <button type="button" data-mode="browse" class="active">Browse</button>
-            <button type="button" data-mode="quiz">Quiz</button>
-        </div>
-
-        <!-- Browse-only: reuses the centered search bar UI already on page -->
-
-        <!-- Quiz filters -->
-        <div class="filters" id="quizFilters">
-            <div class="row" style="flex-wrap: wrap;">
-                <span style="font-size:12px;color:#333;">Competition</span>
-                <label class="chip"><input type="checkbox" value="ALM" checked> ALM</label>
-                <label class="chip"><input type="checkbox" value="ALW" checked> ALW</label>
-                <label class="chip"><input type="checkbox" value="NPL" checked> NPL</label>
-            </div>
-            <div class="row">
-                <label for="levelSelect">Level</label>
-                <select id="levelSelect">
-                    <option value="">Any</option>
-                    <option value="1">1 (Top)</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                </select>
-            </div>
-            <div class="row" style="flex-wrap: wrap;">
-                <span style="font-size:12px;color:#333;">States</span>
-                <label class="chip"><input type="checkbox" value="NSW" checked> NSW</label>
-                <label class="chip"><input type="checkbox" value="VIC" checked> VIC</label>
-                <label class="chip"><input type="checkbox" value="QLD" checked> QLD</label>
-                <label class="chip"><input type="checkbox" value="SA" checked> SA</label>
-                <label class="chip"><input type="checkbox" value="WA" checked> WA</label>
-                <label class="chip"><input type="checkbox" value="TAS" checked> TAS</label>
-                <label class="chip"><input type="checkbox" value="ACT" checked> ACT</label>
-                <label class="chip"><input type="checkbox" value="NT" checked> NT</label>
-            </div>
-            <div class="row">
-                <label for="roundsInput">Rounds</label>
-                <input id="roundsInput" type="number" min="1" max="20" value="5">
-            </div>
-            <div class="row" style="justify-content: flex-end;">
-                <button class="btn" id="startQuizBtn">Start Quiz</button>
-            </div>
-            <div id="quizBanner" style="display:none; font-size:13px; margin-top:8px; color:#111; font-weight:600;"></div>
-        </div>
-    </div>
-
-    <!-- Toast -->
-    <div class="toast" id="toast" style="display:none;"></div>
 
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <script>
-        // Replace with your Mapbox access token
+        // Mapbox access token
         mapboxgl.accessToken = 'pk.eyJ1Ijoic2F2Y3VyY2lvIiwiYSI6ImNtZ3U2azl4YjBjcnAya3B1cnE4Z3MzMHcifQ.tfQmFhPkDPVzd3wKeJXHyA';
 
-        // ====== Helpers =====================================================
+        // Global variables
+        let map, clubs = [];
 
-        /** Map long state names to codes used in data */
-        const STATE_MAP = {
-          'New South Wales': 'NSW',
-          'Victoria': 'VIC',
-          'Queensland': 'QLD',
-          'South Australia': 'SA',
-          'Western Australia': 'WA',
-          'Tasmania': 'TAS',
-          'Australian Capital Territory': 'ACT',
-          'Northern Territory': 'NT'
-        };
-
-        /** Haversine distance (meters) */
-        function haversine(lat1, lon1, lat2, lon2) {
-          const R = 6371000;
-          const toRad = d => d * Math.PI / 180;
-          const dLat = toRad(lat2 - lat1);
-          const dLon = toRad(lon2 - lon1);
-          const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
-          return 2 * R * Math.asin(Math.sqrt(a));
-        }
-
-        /** Score from distance */
-        function scoreFromDistance(meters) {
-          return Math.max(0, Math.round(1000 * Math.exp(-meters / 50000)));
-        }
-
-        /** FeatureCollection from clubs JSON */
+        /**
+         * Convert clubs array to GeoJSON FeatureCollection
+         */
         function toFeatureCollection(clubs) {
-          return {
-            type: 'FeatureCollection',
-            features: clubs.map(c => ({
-              type: 'Feature',
-              properties: {
-                id: c.id,
-                name: c.name,
-                league: c.league || '',
-                leagueId: c.leagueId || '',
-                leagueLevel: Number.isFinite(c.leagueLevel) ? c.leagueLevel : null,
-                stadium: c.stadium || '',
-                state: c.state || '',
-                competition: c.competition || 'Other'
-              },
-              geometry: { type: 'Point', coordinates: [c.lng, c.lat] }
-            }))
-          };
+            return {
+                type: 'FeatureCollection',
+                features: clubs.map(club => ({
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [club.lng, club.lat]
+                    },
+                    properties: club
+                }))
+            };
         }
 
-        /** Filter clubs based on UI selections */
-        function filterClubs(all, { competitions, level, states }) {
-          return all.filter(c => {
-            const compOk = competitions.length === 0 || competitions.includes((c.competition || 'Other').toUpperCase());
-            const stateOk = states.length === 0 || (c.state && states.includes(c.state));
-            const levelOk = !level || (Number.isFinite(c.leagueLevel) && String(c.leagueLevel) === String(level));
-            return compOk && stateOk && levelOk;
-          });
+        /**
+         * Show toast message
+         */
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, duration);
         }
 
-        function showToast(msg) {
-          const t = document.getElementById('toast');
-          t.textContent = msg;
-          t.style.display = 'block';
-          clearTimeout(showToast._tid);
-          showToast._tid = setTimeout(() => { t.style.display = 'none'; }, 2500);
-        }
-
-        // ====== Map init ====================================================
-
-        const map = new mapboxgl.Map({
+        // Initialize map
+        map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/mapbox/dark-v11',
-            center: [134.5, -25], // Australia
-            zoom: 3.4
+            style: 'mapbox://styles/savcurcio/cmgufe8q8002c01sr9c4r3grt',
+            center: [133.7751, -25.2744], // Australia center
+            zoom: 4
         });
 
-        map.on('style.load', function() { console.log('Style loaded'); });
+        // Fallback to default style if custom style fails
         map.on('style.error', function(e) {
             console.error('Custom style error:', e);
-            console.warn('Switching to streets style');
             map.setStyle('mapbox://styles/mapbox/streets-v12');
         });
-        setTimeout(function() {
-            if (!map.isStyleLoaded()) {
-                console.warn('Style not loaded after 5s, switching');
-                map.setStyle('mapbox://styles/mapbox/streets-v12');
-            }
-        }, 5000);
+
         map.on('error', function(e) {
             console.error('Map error:', e);
             document.getElementById('map').innerHTML = '<div style="padding: 20px; text-align: center; color: red;">Map failed to load. Check console for errors.</div>';
         });
 
-        let clubsRaw = [];
-        let clubsFC = null;
-
+        // Load clubs data and setup map
         map.on('load', async function() {
-          console.log('Map loaded successfully!');
-          await loadClubs();
-          addClusterLayers();
-          wireBrowseSearch();
-          wireModeToggle();
-          wireQuiz();
+            try {
+                const response = await fetch('./data/clubs_au.json');
+                clubs = await response.json();
+                
+                const featureCollection = toFeatureCollection(clubs);
+                
+                // Add clustered source
+                map.addSource('clubs', {
+                    type: 'geojson',
+                    data: featureCollection,
+                    cluster: true,
+                    clusterRadius: 40,
+                    clusterMaxZoom: 12
+                });
+
+                // Add cluster circles
+                map.addLayer({
+                    id: 'clusters',
+                    type: 'circle',
+                    source: 'clubs',
+                    filter: ['has', 'point_count'],
+                    paint: {
+                        'circle-color': '#667eea',
+                        'circle-radius': 20
+                    }
+                });
+
+                // Add cluster count labels
+                map.addLayer({
+                    id: 'cluster-count',
+                    type: 'symbol',
+                    source: 'clubs',
+                    filter: ['has', 'point_count'],
+                    layout: {
+                        'text-field': '{point_count_abbreviated}',
+                        'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                        'text-size': 12
+                    },
+                    paint: {
+                        'text-color': '#ffffff'
+                    }
+                });
+
+                // Add unclustered points
+                map.addLayer({
+                    id: 'unclustered-point',
+                    type: 'circle',
+                    source: 'clubs',
+                    filter: ['!', ['has', 'point_count']],
+                    paint: {
+                        'circle-color': '#ff6b6b',
+                        'circle-radius': 8,
+                        'circle-stroke-width': 1,
+                        'circle-stroke-color': '#fff'
+                    }
+                });
+
+                // Handle clicks on unclustered points
+                map.on('click', 'unclustered-point', function(e) {
+                    const coordinates = e.features[0].geometry.coordinates.slice();
+                    const properties = e.features[0].properties;
+                    
+                    // Create popup
+                    new mapboxgl.Popup()
+                        .setLngLat(coordinates)
+                        .setHTML(`
+                            <strong>${properties.name}</strong><br>
+                            League: ${properties.league || '—'}<br>
+                            Level: ${properties.leagueLevel ?? '—'}<br>
+                            Stadium: ${properties.stadium || '—'}<br>
+                            State: ${properties.state || '—'}
+                        `)
+                        .addTo(map);
+                });
+
+                // Change cursor on hover
+                map.on('mouseenter', 'unclustered-point', function() {
+                    map.getCanvas().style.cursor = 'pointer';
+                });
+
+                map.on('mouseleave', 'unclustered-point', function() {
+                    map.getCanvas().style.cursor = '';
+                });
+
+                console.log(`Loaded ${clubs.length} clubs`);
+                
+            } catch (error) {
+                console.error('Error loading clubs:', error);
+                showToast('Error loading clubs data', 5000);
+            }
         });
 
-        async function loadClubs() {
-          try {
-            // If serving from a static root, ensure /data/clubs_au.json exists next to index.html in a /data folder.
-            const res = await fetch('/data/clubs_au.json', { cache: 'no-store' });
-            if (!res.ok) throw new Error('Failed to load clubs JSON');
-            clubsRaw = await res.json();
-            clubsFC = toFeatureCollection(clubsRaw);
-          } catch (e) {
-            console.error(e);
-            showToast('Could not load club data.');
-          }
-        }
-
-        function addClusterLayers() {
-          if (!clubsFC) return;
-
-          if (map.getSource('clubs')) {
-            map.getSource('clubs').setData(clubsFC);
-            return;
-          }
-
-          map.addSource('clubs', {
-            type: 'geojson',
-            data: clubsFC,
-            cluster: true,
-            clusterRadius: 40,
-            clusterMaxZoom: 12
-          });
-
-          // Cluster circles
-          map.addLayer({
-            id: 'clusters',
-            type: 'circle',
-            source: 'clubs',
-            filter: ['has', 'point_count'],
-            paint: {
-              'circle-color': [
-                'step', ['get', 'point_count'],
-                '#9be7a2', 20,
-                '#5bd06a', 50,
-                '#2a9d44'
-              ],
-              'circle-radius': [
-                'step', ['get', 'point_count'],
-                16, 20, 20, 50, 26
-              ]
-            }
-          });
-
-          // Cluster count
-          map.addLayer({
-            id: 'cluster-count',
-            type: 'symbol',
-            source: 'clubs',
-            filter: ['has', 'point_count'],
-            layout: {
-              'text-field': ['get', 'point_count_abbreviated'],
-              'text-size': 12
-            },
-            paint: { 'text-color': '#111' }
-          });
-
-          // Unclustered points
-          map.addLayer({
-            id: 'unclustered-point',
-            type: 'circle',
-            source: 'clubs',
-            filter: ['!', ['has', 'point_count']],
-            paint: {
-              'circle-color': '#1db954',
-              'circle-radius': 5,
-              'circle-stroke-width': 1,
-              'circle-stroke-color': '#000'
-            }
-          });
-
-          // Click cluster to zoom in
-          map.on('click', 'clusters', function (e) {
-            const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
-            const clusterId = features[0].properties.cluster_id;
-            map.getSource('clubs').getClusterExpansionZoom(clusterId, (err, zoom) => {
-              if (err) return;
-              map.easeTo({ center: features[0].geometry.coordinates, zoom });
-            });
-          });
-
-          // Click unclustered point to show popup
-          map.on('click', 'unclustered-point', function (e) {
-            const f = e.features[0];
-            const { name, league, leagueLevel, stadium, state } = f.properties;
-
-            const html = `
-              <div style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; font-size:14px;">
-                <strong>${name}</strong><br/>
-                ${league ? `League: ${league}<br/>` : ``}
-                ${leagueLevel && leagueLevel !== 'null' ? `Level: ${leagueLevel}<br/>` : ``}
-                ${stadium ? `Stadium: ${stadium}<br/>` : ``}
-                ${state ? `State: ${state}` : ``}
-              </div>
-            `;
-            new mapboxgl.Popup({ offset: 12 })
-              .setLngLat(f.geometry.coordinates)
-              .setHTML(html)
-              .addTo(map);
-          });
-
-          map.on('mouseenter', 'clusters', () => { map.getCanvas().style.cursor = 'pointer'; });
-          map.on('mouseleave', 'clusters', () => { map.getCanvas().style.cursor = ''; });
-          map.on('mouseenter', 'unclustered-point', () => { map.getCanvas().style.cursor = 'pointer'; });
-          map.on('mouseleave', 'unclustered-point', () => { map.getCanvas().style.cursor = ''; });
-        }
-
-        // ====== Browse mode search =========================================
-
-        const searchInput = document.getElementById('clubSearch');
-        const searchBtn = document.getElementById('searchBtn');
-
-        function wireBrowseSearch() {
-          function handleSearch() {
-            const term = (searchInput.value || '').trim().toLowerCase();
-            if (!term) return;
-
-            const match = clubsRaw.find(c =>
-              c.name.toLowerCase().includes(term) ||
-              (c.league && c.league.toLowerCase().includes(term)) ||
-              (c.stadium && c.stadium.toLowerCase().includes(term))
-            );
-
-            if (!match) {
-              showToast('No club found. Try another name.');
-              return;
-            }
-
-            map.flyTo({ center: [match.lng, match.lat], zoom: 10, essential: true });
-
-            new mapboxgl.Popup({ offset: 12 })
-              .setLngLat([match.lng, match.lat])
-              .setHTML(`
-                <div style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; font-size:14px;">
-                  <strong>${match.name}</strong><br/>
-                  ${match.league ? `League: ${match.league}<br/>` : ``}
-                  ${Number.isFinite(match.leagueLevel) ? `Level: ${match.leagueLevel}<br/>` : ``}
-                  ${match.stadium ? `Stadium: ${match.stadium}<br/>` : ``}
-                  ${match.state ? `State: ${match.state}` : ``}
-                </div>
-              `)
-              .addTo(map);
-          }
-
-          searchBtn.addEventListener('click', handleSearch);
-          searchInput.addEventListener('keypress', function(e) {
+        // Search functionality
+        document.getElementById('searchBtn').addEventListener('click', handleSearch);
+        document.getElementById('clubSearch').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') handleSearch();
-          });
-          searchInput.addEventListener('focus', function() { this.select(); });
-        }
+        });
 
-        // ====== Mode toggle & Quiz =========================================
-
-        let MODE = 'browse'; // 'browse' | 'quiz'
-
-        function wireModeToggle() {
-          const toggle = document.getElementById('modeToggle');
-          const quizFilters = document.getElementById('quizFilters');
-
-          toggle.addEventListener('click', (e) => {
-            const btn = e.target.closest('button[data-mode]');
-            if (!btn) return;
-            const mode = btn.getAttribute('data-mode');
-            if (mode === MODE) return;
-
-            MODE = mode;
-            [...toggle.querySelectorAll('button')].forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            if (MODE === 'quiz') {
-              quizFilters.style.display = 'block';
-              showToast('Quiz mode: set filters and press Start');
-            } else {
-              quizFilters.style.display = 'none';
-              endQuiz(true); // reset quiz if switching away
-              showToast('Browse mode');
+        function handleSearch() {
+            const searchTerm = document.getElementById('clubSearch').value.trim().toLowerCase();
+            if (!searchTerm) return;
+            
+            const club = clubs.find(c => c.name.toLowerCase().includes(searchTerm));
+            if (!club) {
+                showToast('Club not found', 2000);
+                return;
             }
-          });
+            
+            // Fly to club
+            map.flyTo({
+                center: [club.lng, club.lat],
+                zoom: 12
+            });
+            
+            // Open popup
+            new mapboxgl.Popup()
+                .setLngLat([club.lng, club.lat])
+                .setHTML(`
+                    <strong>${club.name}</strong><br>
+                    League: ${club.league || '—'}<br>
+                    Level: ${club.leagueLevel ?? '—'}<br>
+                    Stadium: ${club.stadium || '—'}<br>
+                    State: ${club.state || '—'}
+                `)
+                .addTo(map);
         }
-
-        // ---- BEGIN QUIZ ----
-
-        const quiz = {
-          active: false,
-          roundsTotal: 5,
-          round: 0,
-          score: 0,
-          target: null,
-          clickHandler: null,
-          lastMarkers: []
-        };
-
-        function wireQuiz() {
-          const startBtn = document.getElementById('startQuizBtn');
-          startBtn.addEventListener('click', startQuiz);
-        }
-
-        function getQuizFiltersFromUI() {
-          const compVals = Array.from(document.querySelectorAll('#quizFilters input[type="checkbox"][value]'))
-            .filter(cb => cb.checked)
-            .map(cb => cb.value);
-          const levelVal = document.getElementById('levelSelect').value;
-          const states = Array.from(document.querySelectorAll('#quizFilters input[type="checkbox"][value]'))
-            .filter(cb => ['NSW','VIC','QLD','SA','WA','TAS','ACT','NT'].includes(cb.value) && cb.checked)
-            .map(cb => cb.value);
-
-          const rounds = Math.max(1, Math.min(20, parseInt(document.getElementById('roundsInput').value || '5', 10)));
-
-          // Separate competitions vs states (since they're all checkboxes)
-          const competitions = compVals.filter(v => ['ALM','ALW','NPL'].includes(v));
-
-          return { competitions, level: levelVal, states, rounds };
-        }
-
-        function startQuiz() {
-          if (!clubsRaw.length) { showToast('Data not loaded yet'); return; }
-
-          const { competitions, level, states, rounds } = getQuizFiltersFromUI();
-          const pool = filterClubs(clubsRaw, { competitions, level, states });
-
-          if (pool.length < 1) {
-            showToast('No clubs match those filters.');
-            return;
-          }
-
-          quiz.active = true;
-          quiz.roundsTotal = rounds;
-          quiz.round = 0;
-          quiz.score = 0;
-
-          document.getElementById('quizBanner').style.display = 'block';
-          nextRound(pool);
-        }
-
-        function nextRound(pool) {
-          quiz.round += 1;
-          clearRoundMarkers();
-
-          // pick random
-          const idx = Math.floor(Math.random() * pool.length);
-          quiz.target = pool[idx];
-
-          // Banner
-          const b = document.getElementById('quizBanner');
-          b.textContent = `Round ${quiz.round}/${quiz.roundsTotal} — Find: ${quiz.target.name}`;
-
-          // Await one click
-          quiz.clickHandler = (e) => {
-            const guessLngLat = e.lngLat;
-            handleGuess(guessLngLat);
-          };
-          map.getCanvas().style.cursor = 'crosshair';
-          map.once('click', quiz.clickHandler);
-        }
-
-        function handleGuess(guess) {
-          map.getCanvas().style.cursor = '';
-
-          // distance + score
-          const d = haversine(quiz.target.lat, quiz.target.lng, guess.lat, guess.lng);
-          const pts = scoreFromDistance(d);
-          quiz.score += pts;
-
-          // markers: guess and target
-          const guessMarker = new mapboxgl.Marker({ color: '#ffd166' }).setLngLat([guess.lng, guess.lat]).addTo(map);
-          const targetMarker = new mapboxgl.Marker({ color: '#ef476f' }).setLngLat([quiz.target.lng, quiz.target.lat]).addTo(map);
-          quiz.lastMarkers.push(guessMarker, targetMarker);
-
-          // popup summary
-          new mapboxgl.Popup({ offset: 12 })
-            .setLngLat([quiz.target.lng, quiz.target.lat])
-            .setHTML(`<strong>${quiz.target.name}</strong><br/>Distance: ${(d/1000).toFixed(1)} km<br/>Score: +${pts}`)
-            .addTo(map);
-
-          showToast(`Distance ${(d/1000).toFixed(1)} km • +${pts} pts`);
-
-          if (quiz.round >= quiz.roundsTotal) {
-            endQuiz(false);
-          } else {
-            setTimeout(() => nextRound(filterClubs(clubsRaw, getQuizFiltersFromUI())), 600);
-          }
-        }
-
-        function clearRoundMarkers() {
-          quiz.lastMarkers.forEach(m => { try { m.remove(); } catch(_){} });
-          quiz.lastMarkers = [];
-        }
-
-        function endQuiz(switchedAway) {
-          map.getCanvas().style.cursor = '';
-          clearRoundMarkers();
-
-          if (quiz.active && !switchedAway) {
-            alert(`Game Over! Final score: ${quiz.score}`);
-          }
-
-          quiz.active = false;
-          quiz.round = 0;
-          quiz.score = 0;
-          quiz.target = null;
-
-          const b = document.getElementById('quizBanner');
-          b.textContent = '';
-          b.style.display = 'none';
-        }
-
-        // ---- END QUIZ ----
     </script>
 </body>
 </html>
