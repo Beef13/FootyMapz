@@ -121,6 +121,36 @@ body {
     will-change: transform;
 }
 
+/* Mobile-only home button */
+.mobile-only {
+    display: none;
+}
+
+/* Desktop: keep home button positioned absolutely */
+@media (min-width: 1001px) {
+    .home-button {
+        position: absolute;
+        top: 40px;
+        left: 40px;
+        z-index: 1200;
+    }
+    
+    .mobile-only {
+        display: none !important;
+    }
+}
+
+/* Mobile: show mobile home button inline */
+@media (max-width: 1000px) {
+    .mobile-only {
+        display: flex !important;
+    }
+    
+    .home-button:not(.mobile-only) {
+        display: none !important;
+    }
+}
+
 .home-icon {
     font-size: 18px;
     line-height: 1;
@@ -308,37 +338,80 @@ body {
     font-size: 14px;
 }
 
+/* Mobile progress section */
+.mobile-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+.mobile-progress span {
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.mobile-progress .progress {
+    flex: 1;
+    margin: 0;
+}
+
+/* Search row for mobile layout */
+.search-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 /* Responsive: As soon as elements touch/overlap, hide list and stack progress under search bar with full width */
 @media (max-width: 1000px) {
     .search-container {
         left: 20px;
+        top: 20px;
         transform: none;
         width: calc(100% - 40px);
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .mobile-progress {
+        display: flex !important;
+        margin-bottom: 8px;
+    }
+
+    .search-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
     .search-input {
-        width: 100%;
+        flex: 1;
+    }
+
+    .search-button {
+        flex-shrink: 0;
     }
 
     .home-button {
         position: static;
-        margin-right: 8px;
         flex-shrink: 0;
     }
 
-    .search-container {
-        display: flex;
-        align-items: center;
-    }
-
     .guessed-panel {
-        top: 100px; /* below search box */
-        right: 20px;
-        left: 20px;
-        width: auto; /* match search width */
+        display: none; /* hide desktop panel on mobile */
     }
 
     .guessed-list {
         display: none; /* hide list on mobile */
+    }
+}
+
+@media (min-width: 1001px) {
+    .mobile-progress {
+        display: none !important;
     }
 }

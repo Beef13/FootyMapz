@@ -135,6 +135,7 @@ map.on('load', function() {
     const guessedPanel = document.getElementById('guessedPanel');
     const clubBtn = document.getElementById('clubGuesserBtn');
     const homeBtn = document.getElementById('homeBtn');
+    const mobileHomeBtn = document.getElementById('mobileHomeBtn');
     const usernameInput = document.getElementById('usernameInput');
     if (clubBtn && landing && gameUI && guessedPanel) {
         clubBtn.addEventListener('click', () => {
@@ -150,19 +151,24 @@ map.on('load', function() {
         });
     }
 
-    // Home button: return to landing
+    // Home button: return to landing (both desktop and mobile)
+    const handleHomeClick = () => {
+        landing.classList.remove('hidden');
+        gameUI.classList.add('hidden');
+        guessedPanel.classList.add('hidden');
+        if (homeBtn) homeBtn.classList.add('hidden');
+        // Prefill username from storage when returning home
+        try {
+            const savedName = localStorage.getItem('footymapz_username') || '';
+            if (usernameInput) usernameInput.value = savedName;
+        } catch (e) {}
+    };
+
     if (homeBtn && landing && gameUI && guessedPanel) {
-        homeBtn.addEventListener('click', () => {
-            landing.classList.remove('hidden');
-            gameUI.classList.add('hidden');
-            guessedPanel.classList.add('hidden');
-            homeBtn.classList.add('hidden');
-            // Prefill username from storage when returning home
-            try {
-                const savedName = localStorage.getItem('footymapz_username') || '';
-                if (usernameInput) usernameInput.value = savedName;
-            } catch (e) {}
-        });
+        homeBtn.addEventListener('click', handleHomeClick);
+    }
+    if (mobileHomeBtn && landing && gameUI && guessedPanel) {
+        mobileHomeBtn.addEventListener('click', handleHomeClick);
     }
 
     // Prefill username on load
@@ -268,6 +274,8 @@ function updateGuessedUI() {
     const list = document.getElementById('guessedList');
     const progressBar = document.getElementById('progressBar');
     const progressLabel = document.getElementById('progressLabel');
+    const mobileProgressBar = document.getElementById('mobileProgressBar');
+    const mobileProgressLabel = document.getElementById('mobileProgressLabel');
 
     // Update list
     list.innerHTML = '';
@@ -283,20 +291,27 @@ function updateGuessedUI() {
     const pct = Math.round((guessed / total) * 100);
     
     // Create hard-stop (no blend) segments for progress bar based on guessed colors
-    if (guessedColors.length > 0) {
-        const segments = guessedColors.map((color, index) => {
+    const segments = guessedColors.length > 0 ? 
+        guessedColors.map((color, index) => {
             const start = (index / guessedColors.length) * 100;
             const end = ((index + 1) / guessedColors.length) * 100;
-            // duplicate stops to avoid blending between segments
             return `${color} ${start}%, ${color} ${end}%`;
-        }).join(', ');
-        progressBar.style.background = `linear-gradient(90deg, ${segments})`;
-    } else {
-        progressBar.style.background = 'linear-gradient(90deg, #667eea, #5a6fd8)';
-    }
+        }).join(', ') : 
+        '#667eea, #5a6fd8';
     
+    const progressStyle = `linear-gradient(90deg, ${segments})`;
+    
+    // Update desktop progress
+    progressBar.style.background = progressStyle;
     progressBar.style.width = pct + '%';
     progressLabel.textContent = `${guessed} / ${total} guessed`;
+    
+    // Update mobile progress
+    if (mobileProgressBar && mobileProgressLabel) {
+        mobileProgressBar.style.background = progressStyle;
+        mobileProgressBar.style.width = pct + '%';
+        mobileProgressLabel.textContent = `${guessed} / ${total}`;
+    }
 }
 
 // Reset game: clear guesses, markers, UI and persistence

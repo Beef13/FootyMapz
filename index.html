@@ -11,10 +11,6 @@
 <body>
     <div id="map"></div>
     
-    <!-- Home Button -->
-    <button id="homeBtn" class="home-button hidden" aria-label="Home">
-        <span class="home-icon">🏠</span>
-    </button>
     
     <!-- Landing Overlay -->
     <div id="landingOverlay" class="landing-overlay">
@@ -31,11 +27,29 @@
         </div>
     </div>
     
+    <!-- Home Button (Desktop) -->
+    <button id="homeBtn" class="home-button hidden" aria-label="Home">
+        <span class="home-icon">🏠</span>
+    </button>
+
     <div class="search-container hidden" id="gameUI">
-        <input type="text" class="search-input" placeholder="Guess club here..." id="searchInput">
-        <button class="search-button" id="restartBtn" aria-label="Restart">
-            <span class="restart-icon">↻</span>
-        </button>
+        <!-- Mobile progress section -->
+        <div class="mobile-progress hidden" id="mobileProgress">
+            <span id="mobileProgressLabel">0 / 0</span>
+            <div class="progress">
+                <div class="progress-bar" id="mobileProgressBar" style="width:0%"></div>
+            </div>
+        </div>
+        
+        <div class="search-row">
+            <button id="mobileHomeBtn" class="home-button mobile-only" aria-label="Home">
+                <span class="home-icon">🏠</span>
+            </button>
+            <input type="text" class="search-input" placeholder="Guess club here..." id="searchInput">
+            <button class="search-button" id="restartBtn" aria-label="Restart">
+                <span class="restart-icon">↻</span>
+            </button>
+        </div>
     </div>
 
     <!-- Guessed Clubs Panel -->
