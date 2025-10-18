@@ -109,8 +109,8 @@ body {
     backdrop-filter: var(--input-blur);
     border: 1px solid var(--input-border);
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -414,4 +414,43 @@ body {
     .mobile-progress {
         display: none !important;
     }
+}
+
+/* Browse mode styles */
+.browse-mode {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--panel-bg);
+    backdrop-filter: var(--panel-blur);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    box-shadow: var(--panel-shadow);
+    padding: 20px;
+    color: white;
+    text-align: center;
+    z-index: 1000;
+    max-width: 300px;
+}
+
+.browse-mode h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.browse-mode p {
+    opacity: 0.8;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.browse-mode .close-browse {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
 }
